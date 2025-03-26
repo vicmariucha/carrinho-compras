@@ -1,23 +1,28 @@
 import Button from 'react-bootstrap/Button';
 import { CarrinhoContexto } from '../carrinhoContexto';
 import { useContext } from 'react';
-import { getProdutoData } from '../produtosLoja';
+import { getDadosProduto } from '../produtosLoja';
 
 function ProdutoCarrinho (props) {
-    const carrinho = useContext(CarrinhoContexto);
+    const { removerDoCarrinho } = useContext(CarrinhoContexto); // Usando o hook corretamente para acessar a função
     const id = props.id;
     const quantidade = props.quantidade;
-    const produtoDado = getProdutoData(id);
 
-    return(
+    const dadosProduto = getDadosProduto(id);
+
+    if (!dadosProduto) {
+        return <p>Produto não encontrado para o ID: {id}</p>;
+    }
+
+    return (
         <>
-            <h3>{produtoDado.titulo}</h3>
-            <p>{quantidade} no total</p>
-            <p>R${ (quantidade * produtoDado.preco).toFixed(2) }</p>
-            <Button size="sm" onClick={() => carrinho.deletarUmCarrinho(id)}>Remover</Button>
-            <hr></hr>
+            <h3>{dadosProduto.titulo}</h3>
+            <p>Quantidade: {quantidade}</p>
+            <p>R${(quantidade * dadosProduto.preco).toFixed(2)}</p>
+            <Button size="sm" onClick={() => removerDoCarrinho(id)}>Remover</Button>
+            <hr />
         </>
-    )
+    );
 }
 
 export default ProdutoCarrinho;

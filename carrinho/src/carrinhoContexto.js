@@ -1,110 +1,96 @@
 import { createContext, useState } from "react";
-import { produtosArray, getProdutoData } from "./produtosLoja";
+import { getDadosProduto } from "./produtosLoja";
 
 export const CarrinhoContexto = createContext({
     items: [],
     getQuantidadeProduto: () => {},
-    addUmCarrinho: () => {},
-    removerUmCarrinho: () => {},
-    deletarUmCarrinho: () => {},
+    adicionarAoCarrinho: () => {},
+    removerDoCarrinho: () => {},
+    deletarDoCarrinho: () => {},
     getCustoTotal: () => {}
 });
 
-export function CarrinhoProvider({children}){
+export function CarrinhoProvider({ children }) {
     const [produtosCarrinho, setProdutosCarrinho] = useState([]);
 
-    function getQuantidadeProduto(id){
-        const quantidade = produtosCarrinho.find(produto => produto.id === id)?.quantity;
-
-        if(quantidade === undefined){
-            return 0;
-        }
-
-        return quantidade;
+    function getQuantidadeProduto(id) {
+        return produtosCarrinho.find(produto => produto.id === id)?.quantity ?? 0; // Certifique-se de que 'quantity' está sendo utilizado
     }
 
-    function addUmCarrinho(id){
-        const quantidade = getQuantidadeProduto(id);
-
-        if (quantidade === 0){ //produto não está no carrinho
-            setProdutosCarrinho(
-                [
-                    ...produtosCarrinho,
-                    {
-                        id: id,
-                        quantity: 1
-                    }
-                ]
-            );
-        }else { // produto está no carrinho
-            setProdutosCarrinho(
-                produtosCarrinho.map(
-                    produto =>
-                    produto.id === id                                 //if
-                    ?{...produto, quantity: produto.quantity + 1} //if é verdadeiro
-                    : produto                                         // if é falso
-                )
-            )
-        }
-    }
-
-    function removerUmCarrinho(id){
-        const quantidade = getQuantidadeProduto(id);
-
-        if(quantidade == 1) {
-            deletarUmCarrinho(id);
-        }else {
-            setProdutosCarrinho(
-                produtosCarrinho.map(
-                    produto =>
-                    produto.id === id                                 
-                    ?{...produto, quantity: produto.quantity - 1} 
-                    : produto                                         
-                )
-            )
-        }
-    }
-
-    function deletarUmCarrinho(id){
-        setProdutosCarrinho(
-            produtosCarrinho =>
-            produtosCarrinho.filter(produtoAtual => {
-                return produtoAtual.id != id;
-            })
-        )
-    }
-
-    function getCustoTotal(){
-        let custoTotal = 0;
-        produtosCarrinho.forEach((itemCarrinho) => {
-            const produtoDado = getProdutoData(itemCarrinho.id);
-            if (produtoDado) {
-                custoTotal += (produtoDado.price * (itemCarrinho.quantity ?? 0));
-            } else {
-                console.warn(`Produto com ID ${itemCarrinho.id} não encontrado!`);
-            }
+    function adicionarAoCarrinho(id) {
+        setProdutosCarrinho(prevProdutos => {
+            const quantidade = getQuantidadeProduto(id);
+            const novoCarrinho = quantidade === 0
+                ? [...prevProdutos, { id, quantity: 1 }] // 'quantity' em vez de 'quantidade'
+                : prevProdutos.map(produto =>
+                    produto.id === id
+                        ? { ...produto, quantity: produto.quantity + 1 } // 'quantity' em vez de 'quantidade'
+                        : produto
+                );
+            
+            console.log("Produto adicionado ao carrinho:", novoCarrinho);
+            return novoCarrinho;
         });
-        return custoTotal;
     }
+
+    function removerDoCarrinho(id) {
+        setProdutosCarrinho(prevProdutos => {
+            const quantidade = getQuantidadeProduto(id);
+            const novoCarrinho = quantidade === 1
+                ? prevProdutos.filter(produto => produto.id !== id)
+                : prevProdutos.map(produto =>
+                    produto.id === id
+                        ? { ...produto, quantity: produto.quantity - 1 } // 'quantity' em vez de 'quantidade'
+                        : produto
+                );
+            
+            console.log("Produto removido do carrinho:", novoCarrinho);
+            return novoCarrinho;
+        });
+    }
+
+    function deletarDoCarrinho(id) {
+        setProdutosCarrinho(prevProdutos => {
+            const novoCarrinho = prevProdutos.filter(produto => produto.id !== id);
+            console.log("Produto deletado do carrinho:", novoCarrinho);
+            return novoCarrinho;
+        });
+    }
+
+    function getCustoTotal() {
+        const total = produtosCarrinho.reduce((total, itemCarrinho) => {
+            const produtoDado = getDadosProduto(itemCarrinho.id);
+            
+            console.log(`Verificando produto ID: ${itemCarrinho.id}`, produtoDado);
+            
+            if (!produtoDado) {
+                console.warn(`Produto com ID ${itemCarrinho.id} não encontrado!`);
+                return total;
+            }
+
+            return total + (produtoDado.preco * (itemCarrinho.quantity ?? 0)); // 'quantity' em vez de 'quantidade'
+        }, 0);
+        
+        console.log("Custo total calculado:", total);
+        return total;
+    }
+
+    console.log("Estado atual do carrinho:", produtosCarrinho);
 
     const contextoValue = {
         items: produtosCarrinho,
         getQuantidadeProduto,
-        addUmCarrinho,
-        removerUmCarrinho,
-        deletarUmCarrinho,
+        adicionarAoCarrinho,
+        removerDoCarrinho,
+        deletarDoCarrinho,
         getCustoTotal
-    }
-    return(
+    };
+
+    return (
         <CarrinhoContexto.Provider value={contextoValue}>
             {children}
         </CarrinhoContexto.Provider>
-    )
+    );
 }
 
 export default CarrinhoProvider;
-
-// codigo aqui embaix
-
-// contexto (carrinho, adicionarCarinho, removerCarrinho)
-// provider -> da acesso a todos as coisas do react no contexto
