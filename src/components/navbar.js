@@ -15,7 +15,7 @@ function NavbarComponent() {
         console.log("Itens no carrinho:", carrinho.items);
 
         try {
-            const response = await fetch('http://localhost:4000/checkout', {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/checkout`, {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json'
