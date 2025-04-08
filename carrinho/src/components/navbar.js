@@ -1,16 +1,19 @@
-import { Button, Navbar, Modal, Container } from 'react-bootstrap';
+import { Button, Navbar, Modal } from 'react-bootstrap';
 import { useState, useContext } from 'react';
 import { CarrinhoContexto } from '../carrinhoContexto';
 import ProdutoCarrinho from './produtoCarrinho';
-import { FaShoppingCart } from 'react-icons/fa'; // Ícone de carrinho
 
 function NavbarComponent() {
     const carrinho = useContext(CarrinhoContexto);
+
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
     const checkout = async () => {
+        console.log("Iniciando checkout...");
+        console.log("Itens no carrinho:", carrinho.items);
+
         try {
             const response = await fetch('http://localhost:4000/checkout', {
                 method: "POST",
@@ -20,12 +23,21 @@ function NavbarComponent() {
                 body: JSON.stringify({ items: carrinho.items })
             });
 
+            if (!response.ok) {
+                throw new Error("Erro na resposta do servidor");
+            }
+
             const data = await response.json();
+            console.log("Resposta recebida do backend:", data);
+
             if (data.url) {
                 window.location.assign(data.url);
+            } else {
+                console.warn("A resposta não contém a URL de redirecionamento.");
             }
         } catch (error) {
-            alert("Erro ao iniciar o pagamento.");
+            console.error("Erro durante o checkout:", error);
+            alert("Erro ao iniciar o pagamento. Verifique se o backend está rodando e tente novamente.");
         }
     };
 
@@ -33,14 +45,12 @@ function NavbarComponent() {
 
     return (
         <>
-            <Navbar expand="sm" className="navbar-custom">
-                <Container className="d-flex justify-content-between align-items-center">
-                    <Navbar.Brand href="/" className="navbar-title">🛍️ Lojinha Mariucha</Navbar.Brand>
-                    <Button variant="outline-primary" onClick={handleShow} className="cart-btn">
-                        <FaShoppingCart style={{ marginRight: '8px' }} />
-                        Carrinho ({produtosConta})
-                    </Button>
-                </Container>
+            <Navbar expand="sm">
+                <Navbar.Brand href='./'>Lojinha Mariucha</Navbar.Brand>
+                <Navbar.Toggle />
+                <Navbar.Collapse className="justify-content-end">
+                    <Button onClick={handleShow}>Carrinho ({produtosConta} itens)</Button>
+                </Navbar.Collapse>
             </Navbar>
 
             <Modal show={show} onHide={handleClose}>
@@ -58,11 +68,11 @@ function NavbarComponent() {
                                     quantidade={produtoAtual.quantity}
                                 />
                             ))}
-                            <h4>Total: R$ {carrinho.getCustoTotal().toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</h4>
-                            <Button variant="success" onClick={checkout} className="mt-3">Comprar</Button>
+                            <h1>Total: R$ {carrinho.getCustoTotal().toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</h1>
+                            <Button variant="success" onClick={checkout}>Comprar itens!</Button>
                         </>
                         :
-                        <h5>Seu carrinho está vazio!</h5>
+                        <h1>Não há itens no seu carrinho!</h1>
                     }
                 </Modal.Body>
             </Modal>
