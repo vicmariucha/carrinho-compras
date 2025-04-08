@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const stripe = require('stripe')('sk_test_51Qps62J20p1jW6QzlUElL82crjNTahHfr2gdbxdXtegeO67mvWWKFGVbt6WUTbcQUejIl5MguEVWISEbdShgJaho00DoNh0hq2');
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 const app = express();
 
@@ -17,15 +17,15 @@ app.post("/checkout", async (req, res) => {
         }
 
         const lineItems = items.map((item) => ({
-            price: item.id, // deve ser o price_xxx de preço único
+            price: item.id, 
             quantity: item.quantity
         }));
 
         const session = await stripe.checkout.sessions.create({
             line_items: lineItems,
-            mode: 'payment', // modo correto para compras únicas
-            success_url: "http://localhost:3000/sucesso",
-            cancel_url: "http://localhost:3000/cancelar"
+            mode: 'payment',
+            success_url: process.env.SUCCESS_URL,
+            cancel_url: process.env.CANCEL_URL
         });
 
         res.json({ url: session.url });
@@ -35,4 +35,5 @@ app.post("/checkout", async (req, res) => {
     }
 });
 
-app.listen(4000, () => console.log("✅ Backend rodando na porta 4000!"));
+const PORT = process.env.PORT || 4000;
+app.listen(PORT, () => console.log(`✅ Backend rodando na porta ${PORT}!`));
