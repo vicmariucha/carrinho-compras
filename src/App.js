@@ -9,9 +9,6 @@ import Loja from './pages/loja';
 import Sucesso from './pages/sucesso';
 import CarrinhoProvider from './carrinhoContexto';
 
-// localhost:3000 -> home
-// localhost:3000/sucesso -> sucesso
-
 function App() {
   return (
     <CarrinhoProvider>
