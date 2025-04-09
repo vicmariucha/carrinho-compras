@@ -20,7 +20,7 @@ const produtosArray = [
 ];
 
 function getDadosProduto(id) {
-    console.log("Buscando produto com ID:", id); // Log de verificação do ID
+    console.log("Buscando produto com ID:", id); 
     let dadosProduto = produtosArray.find(produto => produto.id === id);
 
     if (!dadosProduto) {

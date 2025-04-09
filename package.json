@@ -1,12 +1,10 @@
 {
-  "name": "carrinho",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
     "bootstrap": "^5.3.3",
     "browserify-zlib": "^0.2.0",
     "buffer": "^6.0.3",
-    "carrinho": "file:",
     "cors": "^2.8.5",
     "cra-template": "1.2.0",
     "crypto-browserify": "^3.12.1",

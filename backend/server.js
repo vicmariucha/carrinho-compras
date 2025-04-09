@@ -8,6 +8,10 @@ app.use(cors());
 app.use(express.static("public"));
 app.use(express.json());
 
+app.get("/ping", (req, res) => {
+    res.send("pong");
+});
+
 app.post("/checkout", async (req, res) => {
     try {
         const items = req.body.items;
@@ -17,7 +21,7 @@ app.post("/checkout", async (req, res) => {
         }
 
         const lineItems = items.map((item) => ({
-            price: item.id, 
+            price: item.id,
             quantity: item.quantity
         }));
 

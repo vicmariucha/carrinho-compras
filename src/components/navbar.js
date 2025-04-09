@@ -1,4 +1,4 @@
-import { Button, Navbar, Modal } from 'react-bootstrap';
+import { Button, Navbar, Modal, Spinner } from 'react-bootstrap';
 import { useState, useContext } from 'react';
 import { CarrinhoContexto } from '../carrinhoContexto';
 import ProdutoCarrinho from './produtoCarrinho';
@@ -10,10 +10,10 @@ function NavbarComponent() {
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
-    const checkout = async () => {
-        console.log("Iniciando checkout...");
-        console.log("Itens no carrinho:", carrinho.items);
+    const [loading, setLoading] = useState(false);
 
+    const checkout = async () => {
+        setLoading(true);
         try {
             const response = await fetch(`${process.env.REACT_APP_API_URL}/checkout`, {
                 method: "POST",
@@ -28,16 +28,17 @@ function NavbarComponent() {
             }
 
             const data = await response.json();
-            console.log("Resposta recebida do backend:", data);
 
             if (data.url) {
                 window.location.assign(data.url);
             } else {
-                console.warn("A resposta não contém a URL de redirecionamento.");
+                alert("Algo deu errado. Tente novamente.");
             }
         } catch (error) {
             console.error("Erro durante o checkout:", error);
-            alert("Erro ao iniciar o pagamento. Verifique se o backend está rodando e tente novamente.");
+            alert("Não conseguimos iniciar o pagamento. Tente novamente em instantes.");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -69,7 +70,16 @@ function NavbarComponent() {
                                 />
                             ))}
                             <h1>Total: R$ {carrinho.getCustoTotal().toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</h1>
-                            <Button variant="success" onClick={checkout}>Comprar itens!</Button>
+                            <Button variant="success" onClick={checkout} disabled={loading}>
+                                {loading ? (
+                                    <>
+                                        <Spinner animation="border" size="sm" className="me-2" />
+                                        Processando...
+                                    </>
+                                ) : (
+                                    'Finalizar compra'
+                                )}
+                            </Button>
                         </>
                         :
                         <h1>Não há itens no seu carrinho!</h1>

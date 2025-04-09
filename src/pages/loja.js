@@ -1,7 +1,6 @@
 import {Row, Col} from 'react-bootstrap';
 import { produtosArray } from '../produtosLoja';
 import ProdutoCard from '../components/produtoCard';
-// [{...}, {...}, {...}]
 
 function Loja(){
     return(

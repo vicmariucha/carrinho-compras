@@ -4,7 +4,7 @@ import { useContext } from 'react';
 import { getDadosProduto } from '../produtosLoja';
 
 function ProdutoCarrinho (props) {
-    const { removerDoCarrinho } = useContext(CarrinhoContexto); // Usando o hook corretamente para acessar a função
+    const { removerDoCarrinho } = useContext(CarrinhoContexto); 
     const id = props.id;
     const quantidade = props.quantidade;
 

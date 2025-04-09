@@ -14,17 +14,17 @@ export function CarrinhoProvider({ children }) {
     const [produtosCarrinho, setProdutosCarrinho] = useState([]);
 
     function getQuantidadeProduto(id) {
-        return produtosCarrinho.find(produto => produto.id === id)?.quantity ?? 0; // Certifique-se de que 'quantity' está sendo utilizado
+        return produtosCarrinho.find(produto => produto.id === id)?.quantity ?? 0; 
     }
 
     function adicionarAoCarrinho(id) {
         setProdutosCarrinho(prevProdutos => {
             const quantidade = getQuantidadeProduto(id);
             const novoCarrinho = quantidade === 0
-                ? [...prevProdutos, { id, quantity: 1 }] // 'quantity' em vez de 'quantidade'
+                ? [...prevProdutos, { id, quantity: 1 }] 
                 : prevProdutos.map(produto =>
                     produto.id === id
-                        ? { ...produto, quantity: produto.quantity + 1 } // 'quantity' em vez de 'quantidade'
+                        ? { ...produto, quantity: produto.quantity + 1 } 
                         : produto
                 );
             
@@ -40,7 +40,7 @@ export function CarrinhoProvider({ children }) {
                 ? prevProdutos.filter(produto => produto.id !== id)
                 : prevProdutos.map(produto =>
                     produto.id === id
-                        ? { ...produto, quantity: produto.quantity - 1 } // 'quantity' em vez de 'quantidade'
+                        ? { ...produto, quantity: produto.quantity - 1 }
                         : produto
                 );
             
@@ -68,7 +68,7 @@ export function CarrinhoProvider({ children }) {
                 return total;
             }
 
-            return total + (produtoDado.preco * (itemCarrinho.quantity ?? 0)); // 'quantity' em vez de 'quantidade'
+            return total + (produtoDado.preco * (itemCarrinho.quantity ?? 0));
         }, 0);
         
         console.log("Custo total calculado:", total);
