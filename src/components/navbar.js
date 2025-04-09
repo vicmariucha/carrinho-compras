@@ -5,15 +5,20 @@ import ProdutoCarrinho from './produtoCarrinho';
 
 function NavbarComponent() {
     const carrinho = useContext(CarrinhoContexto);
-
     const [show, setShow] = useState(false);
+    const [loading, setLoading] = useState(false);
+
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
-    const [loading, setLoading] = useState(false);
-
     const checkout = async () => {
+        if (carrinho.items.length === 0) {
+            alert("Seu carrinho está vazio! Adicione itens antes de finalizar a compra.");
+            return;
+        }
+
         setLoading(true);
+
         try {
             const response = await fetch(`${process.env.REACT_APP_API_URL}/checkout`, {
                 method: "POST",
@@ -36,7 +41,7 @@ function NavbarComponent() {
             }
         } catch (error) {
             console.error("Erro durante o checkout:", error);
-            alert("Não conseguimos iniciar o pagamento. Tente novamente em instantes.");
+            alert("Não conseguimos iniciar o pagamento. Verifique sua conexão e tente novamente.");
         } finally {
             setLoading(false);
         }
@@ -59,7 +64,7 @@ function NavbarComponent() {
                     <Modal.Title>Carrinho de compras</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    {produtosConta > 0 ? 
+                    {produtosConta > 0 ? (
                         <>
                             <p>Itens no seu carrinho:</p>
                             {carrinho.items.map((produtoAtual, idx) => (
@@ -81,9 +86,9 @@ function NavbarComponent() {
                                 )}
                             </Button>
                         </>
-                        :
-                        <h1>Não há itens no seu carrinho!</h1>
-                    }
+                    ) : (
+                        <h4>Não há itens no seu carrinho.</h4>
+                    )}
                 </Modal.Body>
             </Modal>
         </>

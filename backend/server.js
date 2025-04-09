@@ -20,6 +20,8 @@ app.post("/checkout", async (req, res) => {
             return res.status(400).json({ error: 'Formato de items inválido' });
         }
 
+        console.log("🛒 Itens recebidos no checkout:", items);
+
         const lineItems = items.map((item) => ({
             price: item.id,
             quantity: item.quantity
@@ -34,7 +36,7 @@ app.post("/checkout", async (req, res) => {
 
         res.json({ url: session.url });
     } catch (err) {
-        console.error("Erro no checkout:", err.message);
+        console.error("❌ Erro no checkout:", err.message);
         res.status(500).json({ error: "Erro ao criar sessão de checkout" });
     }
 });
