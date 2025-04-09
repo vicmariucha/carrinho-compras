@@ -3,7 +3,7 @@
 
 **Carrinho de compras** é uma aplicação web full stack que simula uma loja online, permitindo aos usuários **adicionar produtos ao carrinho**, **ver o total em tempo real** e **finalizar a compra com integração ao Stripe**.  
 
-O projeto foi desenvolvido com foco em boas práticas de front-end moderno usando **React**, **TypeScript** e **Context API**, além de um backend em **Node.js + Express** para gerenciar o checkout.
+O projeto foi desenvolvido com foco em boas práticas de front-end moderno usando **React**, **JavaScript** e **Context API**, além de um backend em **Node.js + Express** para gerenciar o checkout.
 
 > ✅ Aplicação 100% funcional e com deploy no Vercel (frontend) e Render (backend).
 
@@ -23,7 +23,7 @@ O projeto foi desenvolvido com foco em boas práticas de front-end moderno usand
 ## 🛠️ Tecnologias utilizadas
 
 ### Frontend
-- **React** com **TypeScript**
+- **React** com **JavaScript**
 - **Context API** + `useReducer` para controle de estado
 - **CSS customizado**
 - **React Bootstrap** para componentes UI
